@@ -37,9 +37,13 @@ function takeWhere(arr, pred) {
   }
 }
 
-function renderSeries(svg, seriesIndex, data) {
+function dataSeriesClass(seriesIndex, seriesLength) {
+  return `data-series-${String(seriesIndex)} data-series-count-${String(seriesLength)}`;
+}
+
+function renderSeries(svg, seriesIndex, seriesLength, data) {
   var series = svg.append("g")
-                .attr("class", "data-series-" + String(seriesIndex))
+                .attr("class", dataSeriesClass(seriesIndex, seriesLength));
 
   series.selectAll("circle")
       .data(data)
@@ -145,7 +149,7 @@ function drawGraph(data, elId) {
 
   // Plot each data series
   data.series.map(function(d, index) {
-    renderSeries(svg, index, d.results);
+    renderSeries(svg, index, data.series.length, d.results);
   })
 
   // Draw legend
@@ -162,7 +166,7 @@ function drawGraph(data, elId) {
       .attr("y", function(_, i) { return i * 20 })
       .attr("width", 15)
       .attr("height", 15)
-      .attr("class", function(_, i) { return "data-series-" + String(i) })
+      .attr("class", function(_, i) { return dataSeriesClass(i, data.series.length); })
 
   legend.selectAll("text")
     .data(legendData)

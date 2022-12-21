@@ -3,78 +3,80 @@
 <meta charset="utf-8">
 <link rel="stylesheet" href="normalize.css" type="text/css">
 <style>
-html {
-  height: 100%;
-  background: linear-gradient(to top left, #02182c, #0a2a46);
-}
+  html {
+    height: 100%;
+    background: linear-gradient(to top left, #02182c, #0a2a46);
+  }
 
-body {
-  font-weight: normal;
-  font-size: 100%;
-  font-family: sans-serif;
-}
+  body {
+    font-weight: normal;
+    font-size: 100%;
+    font-family: sans-serif;
+  }
 
-main {
-  max-width: 1000px;
-  margin-left: auto;
-  margin-right: auto;
-  background: #d4d2d4;
-  color: #223;
-  padding: 1em;
-  border: 5px solid #5b7b97;
-  border-top: none;
-}
+  main {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    background: #d4d2d4;
+    color: #223;
+    padding: 1em;
+    border: 5px solid #5b7b97;
+    border-top: none;
+  }
 
-h1 {
-  font-style: italic;
-  text-shadow: 2px 2px 0 #bbb;
-}
+  h1 {
+    font-style: italic;
+    text-shadow: 2px 2px 0 #bbb;
+  }
 
-a, a:visited {
-  font-weight: bold;
-  color: #365a7b;
-}
+  a,
+  a:visited {
+    font-weight: bold;
+    color: #365a7b;
+  }
 
-a:hover {
-  color: #5b7b97;
-}
+  a:hover {
+    color: #5b7b97;
+  }
 
-#outputs-container {
-  margin-top: 2em;
-}
+  #outputs-container {
+    margin-top: 2em;
+  }
 
-.graph-container {
-  height: 100%;
-  padding-bottom: 1em;
-  border-bottom: 1px solid black;
-  margin-bottom: 1em;
-}
+  .graph-container {
+    height: 100%;
+    padding-bottom: 1em;
+    border-bottom: 1px solid black;
+    margin-bottom: 1em;
+  }
 
-.graph-container:last-child {
-  padding-bottom: 0;
-  border-bottom-width: 0;
-  margin-bottom:0;
-}
+  .graph-container:last-child {
+    padding-bottom: 0;
+    border-bottom-width: 0;
+    margin-bottom: 0;
+  }
 
-.export-button-container {
-  display: flex;
-  gap: 1em;
-}
+  .export-button-container {
+    display: flex;
+    gap: 1em;
+  }
 
-output svg {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
+  output svg {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
 
-.footer {
-  text-align: center;
-}
+  .footer {
+    text-align: center;
+  }
+
 </style>
 
 <span id="svg-styles" style="display:none">
-/* https://www.vis4.net/palettes/#/9|d|00429d,96ffea|ffffe0,ff005e,93003a|1|1 */
-:root {
+  /* https://www.vis4.net/palettes/#/9|d|00429d,96ffea|ffffe0,ff005e,93003a|1|1 */
+  :root {
   --data-series-0--1-only: #000;
 
   --data-series-0--3-or-less: #00429d;
@@ -104,362 +106,365 @@ output svg {
   --data-series-6--9-or-less: #f4777f;
   --data-series-7--9-or-less: #cf3759;
   --data-series-8--9-or-less: #93003a;
-}
+  }
 
-.background {
+  .background {
   fill: white;
-}
+  }
 
-text {
+  text {
   font-size: 14px;
   font-family: sans-serif;
-}
+  }
 
-.axis-path,
-.axis-line {
+  .axis-path,
+  .axis-line {
   fill: none;
   stroke: #000;
   stroke-width: 1px;
   shape-rendering: crispEdges;
-}
+  }
 
-.line {
+  .line {
   fill: none;
   stroke-width: 1.5px;
-}
+  }
 
-.error-bar {
+  .error-bar {
   fill: none;
-}
+  }
 
-/* Series of 1 */
+  /* Series of 1 */
 
-.data-series-0.data-series-count-1 {
+  .data-series-0.data-series-count-1 {
   stroke: var(--data-series-0--1-only);
   fill: var(--data-series-0--1-only);
-}
+  }
 
-/* Series of 3 */
+  /* Series of 3 */
 
-.data-series-0.data-series-count-3,
-.data-series-0.data-series-count-2 {
+  .data-series-0.data-series-count-3,
+  .data-series-0.data-series-count-2 {
   stroke: var(--data-series-0--3-or-less);
   fill: var(--data-series-0--3-or-less);
-}
+  }
 
-.data-series-1.data-series-count-3,
-.data-series-1.data-series-count-2 {
+  .data-series-1.data-series-count-3,
+  .data-series-1.data-series-count-2 {
   stroke: var(--data-series-1--3-or-less);
   fill: var(--data-series-1--3-or-less);
-}
+  }
 
-.data-series-2.data-series-count-3,
-.data-series-2.data-series-count-2 {
+  .data-series-2.data-series-count-3,
+  .data-series-2.data-series-count-2 {
   stroke: var(--data-series-2--3-or-less);
   fill: var(--data-series-2--3-or-less);
-}
+  }
 
-/* Series of 5 */
+  /* Series of 5 */
 
-.data-series-0.data-series-count-5,
-.data-series-0.data-series-count-4 {
+  .data-series-0.data-series-count-5,
+  .data-series-0.data-series-count-4 {
   stroke: var(--data-series-0--5-or-less);
   fill: var(--data-series-0--5-or-less);
-}
+  }
 
-.data-series-1.data-series-count-5,
-.data-series-1.data-series-count-4 {
+  .data-series-1.data-series-count-5,
+  .data-series-1.data-series-count-4 {
   stroke: var(--data-series-1--5-or-less);
   fill: var(--data-series-1--5-or-less);
-}
+  }
 
-.data-series-2.data-series-count-5,
-.data-series-2.data-series-count-4 {
+  .data-series-2.data-series-count-5,
+  .data-series-2.data-series-count-4 {
   stroke: var(--data-series-2--5-or-less);
   fill: var(--data-series-2--5-or-less);
-}
+  }
 
-.data-series-3.data-series-count-5,
-.data-series-3.data-series-count-4 {
+  .data-series-3.data-series-count-5,
+  .data-series-3.data-series-count-4 {
   stroke: var(--data-series-3--5-or-less);
   fill: var(--data-series-3--5-or-less);
-}
+  }
 
-.data-series-4.data-series-count-5,
-.data-series-4.data-series-count-4 {
+  .data-series-4.data-series-count-5,
+  .data-series-4.data-series-count-4 {
   stroke: var(--data-series-4--5-or-less);
   fill: var(--data-series-4--5-or-less);
-}
+  }
 
-/* Series of 7 */
+  /* Series of 7 */
 
-.data-series-0.data-series-count-7,
-.data-series-0.data-series-count-6 {
+  .data-series-0.data-series-count-7,
+  .data-series-0.data-series-count-6 {
   stroke: var(--data-series-0--7-or-less);
   fill: var(--data-series-0--7-or-less);
-}
+  }
 
-.data-series-1.data-series-count-7,
-.data-series-1.data-series-count-6 {
+  .data-series-1.data-series-count-7,
+  .data-series-1.data-series-count-6 {
   stroke: var(--data-series-1--7-or-less);
   fill: var(--data-series-1--7-or-less);
-}
+  }
 
-.data-series-2.data-series-count-7,
-.data-series-2.data-series-count-6 {
+  .data-series-2.data-series-count-7,
+  .data-series-2.data-series-count-6 {
   stroke: var(--data-series-2--7-or-less);
   fill: var(--data-series-2--7-or-less);
-}
+  }
 
-.data-series-3.data-series-count-7,
-.data-series-3.data-series-count-6 {
+  .data-series-3.data-series-count-7,
+  .data-series-3.data-series-count-6 {
   stroke: var(--data-series-3--7-or-less);
   fill: var(--data-series-3--7-or-less);
-}
+  }
 
-.data-series-4.data-series-count-7,
-.data-series-4.data-series-count-6 {
+  .data-series-4.data-series-count-7,
+  .data-series-4.data-series-count-6 {
   stroke: var(--data-series-4--7-or-less);
   fill: var(--data-series-4--7-or-less);
-}
+  }
 
-.data-series-5.data-series-count-7,
-.data-series-5.data-series-count-6 {
+  .data-series-5.data-series-count-7,
+  .data-series-5.data-series-count-6 {
   stroke: var(--data-series-5--7-or-less);
   fill: var(--data-series-5--7-or-less);
-}
+  }
 
-.data-series-6.data-series-count-7,
-.data-series-6.data-series-count-6 {
+  .data-series-6.data-series-count-7,
+  .data-series-6.data-series-count-6 {
   stroke: var(--data-series-6--7-or-less);
   fill: var(--data-series-6--7-or-less);
-}
+  }
 
-/* Series of 9 */
+  /* Series of 9 */
 
-.data-series-0.data-series-count-9,
-.data-series-0.data-series-count-8 {
+  .data-series-0.data-series-count-9,
+  .data-series-0.data-series-count-8 {
   stroke: var(--data-series-0--9-or-less);
   fill: var(--data-series-0--9-or-less);
-}
+  }
 
-.data-series-1.data-series-count-9,
-.data-series-1.data-series-count-8 {
+  .data-series-1.data-series-count-9,
+  .data-series-1.data-series-count-8 {
   stroke: var(--data-series-1--9-or-less);
   fill: var(--data-series-1--9-or-less);
-}
+  }
 
-.data-series-2.data-series-count-9,
-.data-series-2.data-series-count-8 {
+  .data-series-2.data-series-count-9,
+  .data-series-2.data-series-count-8 {
   stroke: var(--data-series-2--9-or-less);
   fill: var(--data-series-2--9-or-less);
-}
+  }
 
-.data-series-3.data-series-count-9,
-.data-series-3.data-series-count-8 {
+  .data-series-3.data-series-count-9,
+  .data-series-3.data-series-count-8 {
   stroke: var(--data-series-3--9-or-less);
   fill: var(--data-series-3--9-or-less);
-}
+  }
 
-.data-series-4.data-series-count-9,
-.data-series-4.data-series-count-8 {
+  .data-series-4.data-series-count-9,
+  .data-series-4.data-series-count-8 {
   stroke: var(--data-series-4--9-or-less);
   fill: var(--data-series-4--9-or-less);
-}
+  }
 
-.data-series-5.data-series-count-9,
-.data-series-5.data-series-count-8 {
+  .data-series-5.data-series-count-9,
+  .data-series-5.data-series-count-8 {
   stroke: var(--data-series-5--9-or-less);
   fill: var(--data-series-5--9-or-less);
-}
+  }
 
-.data-series-6.data-series-count-9,
-.data-series-6.data-series-count-8 {
+  .data-series-6.data-series-count-9,
+  .data-series-6.data-series-count-8 {
   stroke: var(--data-series-6--9-or-less);
   fill: var(--data-series-6--9-or-less);
-}
+  }
 
-.data-series-7.data-series-count-9,
-.data-series-7.data-series-count-8 {
+  .data-series-7.data-series-count-9,
+  .data-series-7.data-series-count-8 {
   stroke: var(--data-series-7--9-or-less);
   fill: var(--data-series-7--9-or-less);
-}
+  }
 
-.data-series-8.data-series-count-9,
-.data-series-8.data-series-count-8 {
+  .data-series-8.data-series-count-9,
+  .data-series-8.data-series-count-8 {
   stroke: var(--data-series-8--9-or-less);
   fill: var(--data-series-8--9-or-less);
-}
+  }
 </span>
 
 <body>
-<main role="main">
-<h1>purescript-benchotron SVG renderer</h1>
-<ol>
-    <li>
+  <main role="main">
+    <h1>purescript-benchotron SVG renderer</h1>
+    <ol>
+      <li>
         Perform benchmarks on your PureScript/JavaScript code, using
-       <a href="https://github.com/JordanMartinez/purescript-benchotron">purescript-benchotron (Jordan's fork)</a>.
-    </li>
-    <li>
+        <a href="https://github.com/JordanMartinez/purescript-benchotron">purescript-benchotron (Jordan's fork)</a>.
+      </li>
+      <li>
         Upload the results here and have lovely SVG graphs rendered for you.
-    </li>
-</ol>
+      </li>
+    </ol>
 
-<p>Error bars represent one standard deviation (estimated), above and below
-the recorded mean.</p>
+    <p>Error bars represent one standard deviation (estimated), above and below
+      the recorded mean.</p>
 
-<div>
-<form>
-<input type="file" multiple accept="application/json" id="file"></input>
-</form>
-</div>
-
-<div id="outputs-container">
-</div>
-
-<hr>
-<div class="footer">
-    <p>By <a href="https://twitter.com/hdgarrood">@hdgarrood (original author)</a> and edited by <a href="https://github.com/JordanMartinez">Jordan</a> /
-    <a href="https://github.com/JordanMartinez/purescript-benchotron-svg-renderer">Source on GitHub</a></p>
-</div>
-</main>
-
-<script src="d3.v3.min.js"></script>
-<script src="FileSaver.min.js"></script>
-<script src="canvas-toBlob.js"></script>
-<script src="benchotronRenderer.js"></script>
-
-<script>
-var slug = ''
-var exportToXListeners = [];
-
-function getCurrentSvgString(outputElem) {
-  var el = outputElem.getElementsByTagName("svg")[0]
-  if (el != null) {
-    return (new XMLSerializer).serializeToString(el)
-  } else {
-    throw new Error('No result set loaded')
-  }
-}
-
-function handleSvgExport(outputElem) {
-  var svgString = getCurrentSvgString(outputElem)
-  var svgBlob = new Blob([svgString], {type: 'text/svg'})
-  var filename = slug || "graph"
-  saveAs(svgBlob, filename + ".svg")
-}
-
-function handlePngExport(outputElem) {
-  var svgString = getCurrentSvgString(outputElem)
-  var canvas = document.createElement('canvas')
-  canvas.width = 960
-  canvas.height = 500
-
-  svgToCanvas(svgString, canvas, function() {
-    canvas.toBlob(function(blob) {
-      var filename = slug || "graph"
-      saveAs(blob, filename + ".png")
-    })
-  })
-}
-
-// Render SVG (as a string) onto a Canvas element.
-function svgToCanvas(svgString, targetCanvas, callback) {
-  var ctx = targetCanvas.getContext('2d')
-
-  var img = new Image()
-  img.src = "data:image/svg+xml;base64," + btoa(svgString)
-
-  img.onload = function() {
-    ctx.drawImage(img, 0, 0)
-    callback()
-  }
-}
-
-function subscribe(elem, event, listener, capture) {
-  elem.addEventListener(event, listener, capture);
-  return function() {
-    elem.removeEventListener(event, listener, capture);
-  }
-}
-
-function graphId(graphIdx) {
-  return "graph-" + String(graphIdx);
-}
-
-function constructOutputContainer(graphIdx) {
-  /*
-    <div class="graph-container">
-      <div class="export-button-container">
-        <button type="button">Export to SVG</button>
-        <button type="button">Export to PNG</button>
-      </div>
-      <output id="graph-{graphIdx}">
-      </output>
+    <div>
+      <form>
+        <input type="file" multiple accept="application/json" id="file"></input>
+      </form>
     </div>
-  */
-  var outputsContainer = document.getElementById("outputs-container");
-  var graphContainer = document.createElement("div");
-  graphContainer.setAttribute("class", "graph-container");
-  outputsContainer.appendChild(graphContainer);
 
-  var buttonContainer = document.createElement("div");
-  buttonContainer.setAttribute("class", "export-button-container");
-  graphContainer.appendChild(buttonContainer);
+    <div id="outputs-container">
+    </div>
 
-  var outputElem = document.createElement("output");
-  outputElem.setAttribute("id", graphId(graphIdx));
-  graphContainer.appendChild(outputElem);
+    <hr>
+    <div class="footer">
+      <p>By <a href="https://twitter.com/hdgarrood">@hdgarrood (original author)</a> and edited by <a
+          href="https://github.com/JordanMartinez">Jordan</a> /
+        <a href="https://github.com/JordanMartinez/purescript-benchotron-svg-renderer">Source on GitHub</a>
+      </p>
+    </div>
+  </main>
 
-  var exportToSvgButton = document.createElement("button");
-  exportToSvgButton.setAttribute("type", "button");
-  exportToSvgButton.textContent = "Export to SVG"
-  var unSubSvg = subscribe(exportToSvgButton, "click", function() { handleSvgExport(outputElem) }, false);
-  buttonContainer.appendChild(exportToSvgButton);
-  
-  var exportToPngButton = document.createElement("button");
-  exportToPngButton.setAttribute("type", "button");
-  exportToPngButton.textContent = "Export to PNG"
-  var unSubPng = subscribe(exportToSvgButton, 'click', function() { handlePngExport(outputElem) }, false);
-  buttonContainer.appendChild(exportToPngButton);
-  return function() {
-    unSubSvg();
-    unSubPng();
-  }
-}
+  <script src="d3.v3.min.js"></script>
+  <script src="FileSaver.min.js"></script>
+  <script src="canvas-toBlob.js"></script>
+  <script src="benchotronRenderer.js"></script>
 
-function handleFileSelect(evt) {
-  var files = evt.target.files
+  <script>
+    var slug = ''
+    var exportToXListeners = [];
 
-  // remove all previous children and their event listeners
-  exportToXListeners.forEach((unsub) => unsub());
-  var outputsContainer = document.getElementById("outputs-container");
-  while (outputsContainer.firstChild) {
-    outputsContainer.removeChild(outputsContainer.lastChild);
-  }
-
-  var loadGraph = function (file, graphIdx) {
-    var reader = new FileReader;
-    reader.onload = function(e) {
-      var jsonString = e.target.result;
-      var data = JSON.parse(jsonString);
-      slug = data.slug || file.name.replace(/.json/, '');
-      BenchotronRenderer.drawGraph(data, `#${graphId(graphIdx)}`);
+    function getCurrentSvgString(outputElem) {
+      var el = outputElem.getElementsByTagName("svg")[0]
+      if (el != null) {
+        return (new XMLSerializer).serializeToString(el)
+      } else {
+        throw new Error('No result set loaded')
+      }
     }
-    reader.readAsText(file);
-  };
 
-  var newListeners = [];
-  var len = files.length;
-  for (var i = 0; i < len; i++) {
-    newListeners.push(constructOutputContainer(i))
-    loadGraph(files[i], i);
-  }
-  exportToXListeners = newListeners;
-}
+    function handleSvgExport(outputElem) {
+      var svgString = getCurrentSvgString(outputElem)
+      var svgBlob = new Blob([svgString], { type: 'text/svg' })
+      var filename = slug || "graph"
+      saveAs(svgBlob, filename + ".svg")
+    }
 
-document.getElementById('file')
-  .addEventListener('change', handleFileSelect, false)
+    function handlePngExport(outputElem) {
+      var svgString = getCurrentSvgString(outputElem)
+      var canvas = document.createElement('canvas')
+      canvas.width = 960
+      canvas.height = 500
 
-</script>
+      svgToCanvas(svgString, canvas, function () {
+        canvas.toBlob(function (blob) {
+          var filename = slug || "graph"
+          saveAs(blob, filename + ".png")
+        })
+      })
+    }
+
+    // Render SVG (as a string) onto a Canvas element.
+    function svgToCanvas(svgString, targetCanvas, callback) {
+      var ctx = targetCanvas.getContext('2d')
+
+      var img = new Image()
+      img.src = "data:image/svg+xml;base64," + btoa(svgString)
+
+      img.onload = function () {
+        ctx.drawImage(img, 0, 0)
+        callback()
+      }
+    }
+
+    function subscribe(elem, event, listener, capture) {
+      elem.addEventListener(event, listener, capture);
+      return function () {
+        elem.removeEventListener(event, listener, capture);
+      }
+    }
+
+    function graphId(graphIdx) {
+      return "graph-" + String(graphIdx);
+    }
+
+    function constructOutputContainer(graphIdx) {
+      /*
+        <div class="graph-container">
+          <div class="export-button-container">
+            <button type="button">Export to SVG</button>
+            <button type="button">Export to PNG</button>
+          </div>
+          <output id="graph-{graphIdx}">
+          </output>
+        </div>
+      */
+      var outputsContainer = document.getElementById("outputs-container");
+      var graphContainer = document.createElement("div");
+      graphContainer.setAttribute("class", "graph-container");
+      outputsContainer.appendChild(graphContainer);
+
+      var buttonContainer = document.createElement("div");
+      buttonContainer.setAttribute("class", "export-button-container");
+      graphContainer.appendChild(buttonContainer);
+
+      var outputElem = document.createElement("output");
+      outputElem.setAttribute("id", graphId(graphIdx));
+      graphContainer.appendChild(outputElem);
+
+      var exportToSvgButton = document.createElement("button");
+      exportToSvgButton.setAttribute("type", "button");
+      exportToSvgButton.textContent = "Export to SVG"
+      var unSubSvg = subscribe(exportToSvgButton, "click", function () { handleSvgExport(outputElem) }, false);
+      buttonContainer.appendChild(exportToSvgButton);
+
+      var exportToPngButton = document.createElement("button");
+      exportToPngButton.setAttribute("type", "button");
+      exportToPngButton.textContent = "Export to PNG"
+      var unSubPng = subscribe(exportToSvgButton, 'click', function () { handlePngExport(outputElem) }, false);
+      buttonContainer.appendChild(exportToPngButton);
+      return function () {
+        unSubSvg();
+        unSubPng();
+      }
+    }
+
+    function handleFileSelect(evt) {
+      var files = evt.target.files
+
+      // remove all previous children and their event listeners
+      exportToXListeners.forEach((unsub) => unsub());
+      var outputsContainer = document.getElementById("outputs-container");
+      while (outputsContainer.firstChild) {
+        outputsContainer.removeChild(outputsContainer.lastChild);
+      }
+
+      var loadGraph = function (file, graphIdx) {
+        var reader = new FileReader;
+        reader.onload = function (e) {
+          var jsonString = e.target.result;
+          var data = JSON.parse(jsonString);
+          slug = data.slug || file.name.replace(/.json/, '');
+          BenchotronRenderer.drawGraph(data, `#${graphId(graphIdx)}`);
+        }
+        reader.readAsText(file);
+      };
+
+      var newListeners = [];
+      var len = files.length;
+      for (var i = 0; i < len; i++) {
+        newListeners.push(constructOutputContainer(i))
+        loadGraph(files[i], i);
+      }
+      exportToXListeners = newListeners;
+    }
+
+    document.getElementById('file')
+      .addEventListener('change', handleFileSelect, false)
+
+  </script>
+
 </html>

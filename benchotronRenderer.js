@@ -1,189 +1,188 @@
-window.BenchotronRenderer = {}
-  ; (function () {
+window.BenchotronRenderer = {};
+(function () {
+  const margin = { top: 40, right: 40, bottom: 60, left: 80 };
+  const width = 960 - margin.left - margin.right;
+  const height = 500 - margin.top - margin.bottom;
 
-    const margin = { top: 40, right: 40, bottom: 60, left: 80 };
-    const width = 960 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+  const x = d3.scale.linear()
+    .range([0, width]);
 
-    const x = d3.scale.linear()
-      .range([0, width]);
+  const y = d3.scale.linear()
+    .range([height, 0]);
 
-    const y = d3.scale.linear()
-      .range([height, 0]);
+  const xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
 
-    const xAxis = d3.svg.axis()
-      .scale(x)
-      .orient("bottom");
+  const yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .tickFormat((d) => {
+      const scientific = d3.format('0.2e')
+      const fixed = d3.format('0.2f')
+      return d <= 0.01 ? scientific(d) : fixed(d);
+    });
 
-    const yAxis = d3.svg.axis()
-      .scale(y)
-      .orient("left")
-      .tickFormat((d) => {
-        const scientific = d3.format('0.2e')
-        const fixed = d3.format('0.2f')
-        return d <= 0.01 ? scientific(d) : fixed(d);
-      });
+  const line = d3.svg.line()
+    .x((d) => x(d.size))
+    .y((d) => y(d.stats.mean));
 
-    const line = d3.svg.line()
-      .x((d) => x(d.size))
-      .y((d) => y(d.stats.mean));
-
-    function takeWhere(arr, pred) {
-      const result = arr.filter(pred);
-      if (result.length === 1) {
-        return result[0];
-      } else {
-        throw new Error('takeWhere: did not return exactly 1 result');
-      }
+  function takeWhere(arr, pred) {
+    const result = arr.filter(pred);
+    if (result.length === 1) {
+      return result[0];
+    } else {
+      throw new Error('takeWhere: did not return exactly 1 result');
     }
+  }
 
-    function dataSeriesClass(seriesIndex, seriesLength) {
-      return `data-series-${String(seriesIndex)} data-series-count-${String(seriesLength)}`;
-    }
+  function dataSeriesClass(seriesIndex, seriesLength) {
+    return `data-series-${String(seriesIndex)} data-series-count-${String(seriesLength)}`;
+  }
 
-    function renderSeries(svg, seriesIndex, seriesLength, data) {
-      const series = svg.append("g")
-        .attr("class", dataSeriesClass(seriesIndex, seriesLength));
+  function renderSeries(svg, seriesIndex, seriesLength, data) {
+    const series = svg.append("g")
+      .attr("class", dataSeriesClass(seriesIndex, seriesLength));
 
-      series.selectAll("circle")
-        .data(data)
-        .enter()
-        .append("circle")
-        .attr("cx", (d) => x(d.size))
-        .attr("cy", (d) => y(d.stats.mean))
-        .attr("r", 3);
+    series.selectAll("circle")
+      .data(data)
+      .enter()
+      .append("circle")
+      .attr("cx", (d) => x(d.size))
+      .attr("cy", (d) => y(d.stats.mean))
+      .attr("r", 3);
 
-      series.selectAll("path.error-bar")
-        .data(data)
-        .enter()
-        .append("path")
-        .attr("class", "error-bar")
-        .attr("x", (d) => x(d.size))
-        .attr("y", (d) => y(d.stats.mean))
-        .attr("d", function (d) {
-          const mx = x(d.size);
-          const my = y(d.stats.mean);
-          const my1 = y(d.stats.mean + d.stats.deviation);
-          const my2 = y(d.stats.mean - d.stats.deviation);
-          const dx = 3;
-          return ["M", mx, my,
-            "V", my1, "h", -dx, "h", 2 * dx, "h", -dx,
-            "V", my2, "h", -dx, "h", 2 * dx
-          ].join(' ');
-        })
-
-      series.append("path")
-        .datum(data)
-        .attr("class", "line")
-        .attr("d", line);
-    }
-
-    function concatArray(x, y) {
-      return x.concat(y);
-    }
-
-    function drawGraph(data, elId) {
-      // Delete the old graph
-      d3.select(elId + " svg").remove();
-
-      // Create the new graph
-      const svg = d3.select(elId).append("svg");
-
-      // Add the styles
-      const styleText = d3.select("#svg-styles").text();
-      d3.select(elId + " svg")
-        .append("defs")
-        .append("style")
-        .attr("type", "text/css")
-        .text(styleText);
-
-      // Prepare the graph
-      const totalWidth = width + margin.left + margin.right;
-      const totalHeight = height + margin.top + margin.bottom;
-      svg.attr("width", totalWidth)
-        .attr("height", totalHeight);
-      svg.append("rect")
-        .attr("width", totalWidth)
-        .attr("height", totalHeight)
-        .attr("class", "background");
-      const chartArea = svg.append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-      // Compute appropriate scales
-      const allData = data.series
-        .map((x) => x.results)
-        .reduce(concatArray, []); // flatten
-
-      x.domain(d3.extent(allData, (d) => d.size));
-      y.domain(d3.extent(allData, (d) => d.stats.mean));
-
-      // Draw title
-      chartArea.append("g")
-        .attr("transform", "translate(" + (width / 2) + ", 0)")
-        .append("text")
-        .style("text-anchor", "middle")
-        .style("font-size", "28px")
-        .text(data.title);
-
-      // Draw x axis
-      chartArea.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis)
-        .append("text")
-        .attr("x", width / 2)
-        .attr("y", 40)
-        .style("text-anchor", "middle")
-        .text(data.sizeInterpretation);
-
-      // Draw y axis
-      chartArea.append("g")
-        .attr("class", "y axis")
-        .call(yAxis)
-        .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text("Mean running time (seconds)");
-
-      // Plot each data series
-      data.series.map(function (d, index) {
-        renderSeries(chartArea, index, data.series.length, d.results);
+    series.selectAll("path.error-bar")
+      .data(data)
+      .enter()
+      .append("path")
+      .attr("class", "error-bar")
+      .attr("x", (d) => x(d.size))
+      .attr("y", (d) => y(d.stats.mean))
+      .attr("d", function (d) {
+        const mx = x(d.size);
+        const my = y(d.stats.mean);
+        const my1 = y(d.stats.mean + d.stats.deviation);
+        const my2 = y(d.stats.mean - d.stats.deviation);
+        const dx = 3;
+        return ["M", mx, my,
+          "V", my1, "h", -dx, "h", 2 * dx, "h", -dx,
+          "V", my2, "h", -dx, "h", 2 * dx
+        ].join(' ');
       })
 
-      // Draw legend
-      const legend = chartArea.append("g")
-        .attr("class", "legend")
-        .attr("transform", "translate(50, 50)");
+    series.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("d", line);
+  }
 
-      const legendData = data.series.map((d) => d.name);
-      legend.selectAll("rect")
-        .data(legendData)
-        .enter()
-        .append("rect")
-        .attr("x", 0)
-        .attr("y", (_, i) => i * 20)
-        .attr("width", 15)
-        .attr("height", 15)
-        .attr("class", (_, i) => dataSeriesClass(i, data.series.length));
+  function concatArray(x, y) {
+    return x.concat(y);
+  }
 
-      legend.selectAll("text")
-        .data(legendData)
-        .enter()
-        .append("text")
-        .attr("x", 24)
-        .attr("y", (_, i) => i * 20 + 13)
-        .text((d) => d);
+  function drawGraph(data, elId) {
+    // Delete the old graph
+    d3.select(elId + " svg").remove();
 
-      // HACK: Apply some classes for styling, since apparently lots of SVG
-      // software can't cope with anything other than the most basic selectors
-      svg.selectAll('.axis line')
-        .attr('class', 'axis-line');
+    // Create the new graph
+    const svg = d3.select(elId).append("svg");
 
-      svg.selectAll('.axis path')
-        .attr('class', 'axis-path');
-    }
+    // Add the styles
+    const styleText = d3.select("#svg-styles").text();
+    d3.select(elId + " svg")
+      .append("defs")
+      .append("style")
+      .attr("type", "text/css")
+      .text(styleText);
 
-    window.BenchotronRenderer.drawGraph = drawGraph;
-  })();
+    // Prepare the graph
+    const totalWidth = width + margin.left + margin.right;
+    const totalHeight = height + margin.top + margin.bottom;
+    svg.attr("width", totalWidth)
+      .attr("height", totalHeight);
+    svg.append("rect")
+      .attr("width", totalWidth)
+      .attr("height", totalHeight)
+      .attr("class", "background");
+    const chartArea = svg.append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // Compute appropriate scales
+    const allData = data.series
+      .map((x) => x.results)
+      .reduce(concatArray, []); // flatten
+
+    x.domain(d3.extent(allData, (d) => d.size));
+    y.domain(d3.extent(allData, (d) => d.stats.mean));
+
+    // Draw title
+    chartArea.append("g")
+      .attr("transform", "translate(" + (width / 2) + ", 0)")
+      .append("text")
+      .style("text-anchor", "middle")
+      .style("font-size", "28px")
+      .text(data.title);
+
+    // Draw x axis
+    chartArea.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", 40)
+      .style("text-anchor", "middle")
+      .text(data.sizeInterpretation);
+
+    // Draw y axis
+    chartArea.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Mean running time (seconds)");
+
+    // Plot each data series
+    data.series.map(function (d, index) {
+      renderSeries(chartArea, index, data.series.length, d.results);
+    })
+
+    // Draw legend
+    const legend = chartArea.append("g")
+      .attr("class", "legend")
+      .attr("transform", "translate(50, 50)");
+
+    const legendData = data.series.map((d) => d.name);
+    legend.selectAll("rect")
+      .data(legendData)
+      .enter()
+      .append("rect")
+      .attr("x", 0)
+      .attr("y", (_, i) => i * 20)
+      .attr("width", 15)
+      .attr("height", 15)
+      .attr("class", (_, i) => dataSeriesClass(i, data.series.length));
+
+    legend.selectAll("text")
+      .data(legendData)
+      .enter()
+      .append("text")
+      .attr("x", 24)
+      .attr("y", (_, i) => i * 20 + 13)
+      .text((d) => d);
+
+    // HACK: Apply some classes for styling, since apparently lots of SVG
+    // software can't cope with anything other than the most basic selectors
+    svg.selectAll('.axis line')
+      .attr('class', 'axis-line');
+
+    svg.selectAll('.axis path')
+      .attr('class', 'axis-path');
+  }
+
+  window.BenchotronRenderer.drawGraph = drawGraph;
+})();

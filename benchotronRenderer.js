@@ -85,6 +85,29 @@ window.BenchotronRenderer = {};
     return x.concat(y);
   }
 
+  function arrContains(arr, x) {
+    return arr.indexOf(x) !== -1;
+  }
+
+  function taggedResults(data) {
+    const tags = data.series.reduce((acc, next) => {
+      return next.tags.reduce((acc2, tag) => {
+        acc2.push(tag);
+        return acc2;
+      }, acc);
+    }, []);
+    console.log(tags);
+    console.log(tags.length);
+    return tags.reduce((acc, nextTag) => {
+      acc.push({
+        ...data,
+        series: data.series.filter((x) => arrContains(x.tags, nextTag)),
+        tag: nextTag,
+      })
+      return acc;
+    }, []);
+  }
+
   function renderBenchmark(graphArea, data) {
     const chartArea = graphArea.append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
@@ -98,12 +121,20 @@ window.BenchotronRenderer = {};
     y.domain(d3.extent(allData, (d) => d.stats.mean));
 
     // Draw title
-    chartArea.append("g")
-      .attr("transform", `translate(${width / 2}, 0)`)
-      .append("text")
+    const titleArea = chartArea.append("g")
+      .attr("transform", `translate(${width / 2}, 0)`);
+    titleArea.append("text")
       .style("text-anchor", "middle")
       .style("font-size", "28px")
-      .text(data.title);
+      .text(data.tag ? data.title + "*" : data.title);
+
+    if (data.tag) {
+      titleArea.append("text")
+        .attr("y", 20)
+        .style("text-anchor", "middle")
+        .style("font-size", "16px")
+        .text(`* Tag: ${data.tag}`);
+    }
 
     // Draw x axis
     chartArea.append("g")
@@ -204,12 +235,16 @@ window.BenchotronRenderer = {};
       .attr("type", "text/css")
       .text(styleText);
 
+    const taggedData = taggedResults(data);
+    const numOfGraphs = 1 + taggedData.length;
+    const svgHeight = totalHeight * numOfGraphs + gap * (numOfGraphs - 1);
+
     // Prepare the graph
     svg.attr("width", totalWidth)
-      .attr("height", totalHeight * 2 + gap * (2 - 1));
+      .attr("height", svgHeight);
     svg.append("rect")
       .attr("width", totalWidth)
-      .attr("height", totalHeight * 2 + gap * (2 - 1))
+      .attr("height", svgHeight)
       .attr("class", "background");
 
     const graphArea1 = svg.append("g")
@@ -217,17 +252,19 @@ window.BenchotronRenderer = {};
 
     renderBenchmark(graphArea1, data);
 
-    svg.append("line")
-      .attr("x1", 0)
-      .attr("y1", (totalHeight * 1 + (gap * 0) + gap / 2))
-      .attr("x2", totalWidth)
-      .attr("y2", (totalHeight * 1 + (gap * 0) + gap / 2))
-      .attr("class", "graph-gap-line");
+    taggedData.forEach((newData, idx) => {
+      svg.append("line")
+        .attr("x1", 0)
+        .attr("y1", (totalHeight * (idx + 1) + (gap * idx) + gap / 2))
+        .attr("x2", totalWidth)
+        .attr("y2", (totalHeight * (idx + 1) + (gap * idx) + gap / 2))
+        .attr("class", "graph-gap-line");
 
-    const graphArea2 = svg.append("g")
-      .attr("transform", `translate(0, ${(totalHeight * 1) + (gap * 1)})`);
+      const taggedGraphArea = svg.append("g")
+        .attr("transform", `translate(0, ${(totalHeight * (idx + 1)) + (gap * (idx + 1))})`);
 
-    renderBenchmark(graphArea2, data);
+      renderBenchmark(taggedGraphArea, newData);
+    });
   }
 
   window.BenchotronRenderer.drawGraph = drawGraph;

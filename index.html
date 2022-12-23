@@ -334,7 +334,7 @@
   <script src="benchotronRenderer.js"></script>
 
   <script>
-    var slug = ''
+    var slugs = [];
     var exportToXListeners = [];
 
     function getCurrentSvgString(outputElem) {
@@ -346,14 +346,14 @@
       }
     }
 
-    function handleSvgExport(outputElem) {
+    function handleSvgExport(outputElem, graphIdx) {
       var svgString = getCurrentSvgString(outputElem)
       var svgBlob = new Blob([svgString], { type: 'text/svg' })
-      var filename = slug || "graph"
+      var filename = slugs[graphIdx] || "graph"
       saveAs(svgBlob, filename + ".svg")
     }
 
-    function handlePngExport(outputElem) {
+    function handlePngExport(outputElem, graphIdx) {
       var svgString = getCurrentSvgString(outputElem)
       var canvas = document.createElement('canvas')
       canvas.width = 960
@@ -361,7 +361,7 @@
 
       svgToCanvas(svgString, canvas, function () {
         canvas.toBlob(function (blob) {
-          var filename = slug || "graph"
+          var filename = slugs[graphIdx] || "graph"
           saveAs(blob, filename + ".png")
         })
       })
@@ -418,13 +418,13 @@
       var exportToSvgButton = document.createElement("button");
       exportToSvgButton.setAttribute("type", "button");
       exportToSvgButton.textContent = "Export to SVG"
-      var unSubSvg = subscribe(exportToSvgButton, "click", function () { handleSvgExport(outputElem) }, false);
+      var unSubSvg = subscribe(exportToSvgButton, "click", function () { handleSvgExport(outputElem, graphIdx) }, false);
       buttonContainer.appendChild(exportToSvgButton);
 
       var exportToPngButton = document.createElement("button");
       exportToPngButton.setAttribute("type", "button");
       exportToPngButton.textContent = "Export to PNG"
-      var unSubPng = subscribe(exportToSvgButton, 'click', function () { handlePngExport(outputElem) }, false);
+      var unSubPng = subscribe(exportToSvgButton, 'click', function () { handlePngExport(outputElem, graphIdx) }, false);
       buttonContainer.appendChild(exportToPngButton);
       return function () {
         unSubSvg();
@@ -442,24 +442,27 @@
         outputsContainer.removeChild(outputsContainer.lastChild);
       }
 
-      var loadGraph = function (file, graphIdx) {
+      var loadGraph = function (file, graphIdx, newSlugs) {
         var reader = new FileReader;
         reader.onload = function (e) {
           var jsonString = e.target.result;
           var data = JSON.parse(jsonString);
           slug = data.slug || file.name.replace(/.json/, '');
+          newSlugs[graphIdx] = slug;
           BenchotronRenderer.drawGraph(data, `#${graphId(graphIdx)}`);
         }
         reader.readAsText(file);
       };
 
       var newListeners = [];
+      var newSlugs = []
       var len = files.length;
       for (var i = 0; i < len; i++) {
         newListeners.push(constructOutputContainer(i))
-        loadGraph(files[i], i);
+        loadGraph(files[i], i, newSlugs);
       }
       exportToXListeners = newListeners;
+      slugs = newSlugs;
     }
 
     document.getElementById('file')

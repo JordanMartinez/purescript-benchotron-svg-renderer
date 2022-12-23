@@ -1,310 +1,314 @@
 <!DOCTYPE html>
-<html>
-<meta charset="utf-8">
-<link rel="stylesheet" href="normalize.css" type="text/css">
-<style>
-  html {
-    height: 100%;
-    background: linear-gradient(to top left, #02182c, #0a2a46);
-  }
+<html lang="en">
 
-  body {
-    font-weight: normal;
-    font-size: 100%;
-    font-family: sans-serif;
-  }
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="normalize.css" type="text/css">
+  <style>
+    html {
+      height: 100%;
+      background: linear-gradient(to top left, #02182c, #0a2a46);
+    }
 
-  main {
-    max-width: 1000px;
-    margin-left: auto;
-    margin-right: auto;
-    background: #d4d2d4;
-    color: #223;
-    padding: 1em;
-    border: 5px solid #5b7b97;
-    border-top: none;
-  }
+    body {
+      font-weight: normal;
+      font-size: 100%;
+      font-family: sans-serif;
+    }
 
-  h1 {
-    font-style: italic;
-    text-shadow: 2px 2px 0 #bbb;
-  }
+    main {
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+      background: #d4d2d4;
+      color: #223;
+      padding: 1em;
+      border: 5px solid #5b7b97;
+      border-top: none;
+    }
 
-  a,
-  a:visited {
-    font-weight: bold;
-    color: #365a7b;
-  }
+    h1 {
+      font-style: italic;
+      text-shadow: 2px 2px 0 #bbb;
+    }
 
-  a:hover {
-    color: #5b7b97;
-  }
+    a,
+    a:visited {
+      font-weight: bold;
+      color: #365a7b;
+    }
 
-  #outputs-container {
-    margin-top: 2em;
-  }
+    a:hover {
+      color: #5b7b97;
+    }
 
-  .graph-container {
-    height: 100%;
-    padding-bottom: 1em;
-    border-bottom: 1px solid black;
-    margin-bottom: 1em;
-  }
+    #outputs-container {
+      margin-top: 2em;
+    }
 
-  .graph-container:last-child {
-    padding-bottom: 0;
-    border-bottom-width: 0;
-    margin-bottom: 0;
-  }
+    .graph-container {
+      height: 100%;
+      padding-bottom: 1em;
+      border-bottom: 1px solid black;
+      margin-bottom: 1em;
+    }
 
-  .graph-footer text {
-    font-size: 12px;
-  }
+    .graph-container:last-child {
+      padding-bottom: 0;
+      border-bottom-width: 0;
+      margin-bottom: 0;
+    }
 
-  .graph-gap-line {
-    stroke: black;
-    stroke-width: 1px;
-  }
+    .graph-footer text {
+      font-size: 12px;
+    }
 
-  .export-button-container {
-    display: flex;
-    gap: 1em;
-  }
+    .graph-gap-line {
+      stroke: black;
+      stroke-width: 1px;
+    }
 
-  output svg {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
+    .export-button-container {
+      display: flex;
+      gap: 1em;
+    }
 
+    output svg {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
-  .footer {
-    text-align: center;
-  }
+    .footer {
+      text-align: center;
+    }
 
-</style>
-
-<span id="svg-styles" style="display:none">
-  /* https://www.vis4.net/palettes/#/9|d|00429d,96ffea|ffffe0,ff005e,93003a|1|1 */
-  :root {
-  --data-series-0--1-only: #000;
-
-  --data-series-0--3-or-less: #00429d;
-  --data-series-1--3-or-less: #96ffea;
-  --data-series-2--3-or-less: #93003a;
-
-  --data-series-0--5-or-less: #00429d;
-  --data-series-1--5-or-less: #629cc4;
-  --data-series-2--5-or-less: #96ffea;
-  --data-series-3--5-or-less: #f4777f;
-  --data-series-4--5-or-less: #93003a;
-
-  --data-series-0--7-or-less: #00429d;
-  --data-series-1--7-or-less: #4d7cb7;
-  --data-series-2--7-or-less: #74bcd1;
-  --data-series-3--7-or-less: #96ffea;
-  --data-series-4--7-or-less: #ffa59e;
-  --data-series-5--7-or-less: #dd4c65;
-  --data-series-6--7-or-less: #93003a;
-
-  --data-series-0--9-or-less: #00429d;
-  --data-series-1--9-or-less: #416db1;
-  --data-series-2--9-or-less: #629cc4;
-  --data-series-3--9-or-less: #7dccd7;
-  --data-series-4--9-or-less: #96ffea;
-  --data-series-5--9-or-less: #ffbcaf;
-  --data-series-6--9-or-less: #f4777f;
-  --data-series-7--9-or-less: #cf3759;
-  --data-series-8--9-or-less: #93003a;
-  }
-
-  .background {
-  fill: white;
-  }
-
-  text {
-  font-size: 14px;
-  font-family: sans-serif;
-  }
-
-  .axis-path,
-  .axis-line {
-  fill: none;
-  stroke: #000;
-  stroke-width: 1px;
-  shape-rendering: crispEdges;
-  }
-
-  .line {
-  fill: none;
-  stroke-width: 1.5px;
-  }
-
-  .error-bar {
-  fill: none;
-  }
-
-  /* Series of 1 */
-
-  .data-series-0.data-series-count-1 {
-  stroke: var(--data-series-0--1-only);
-  fill: var(--data-series-0--1-only);
-  }
-
-  /* Series of 3 */
-
-  .data-series-0.data-series-count-3,
-  .data-series-0.data-series-count-2 {
-  stroke: var(--data-series-0--3-or-less);
-  fill: var(--data-series-0--3-or-less);
-  }
-
-  .data-series-1.data-series-count-3,
-  .data-series-1.data-series-count-2 {
-  stroke: var(--data-series-1--3-or-less);
-  fill: var(--data-series-1--3-or-less);
-  }
-
-  .data-series-2.data-series-count-3,
-  .data-series-2.data-series-count-2 {
-  stroke: var(--data-series-2--3-or-less);
-  fill: var(--data-series-2--3-or-less);
-  }
-
-  /* Series of 5 */
-
-  .data-series-0.data-series-count-5,
-  .data-series-0.data-series-count-4 {
-  stroke: var(--data-series-0--5-or-less);
-  fill: var(--data-series-0--5-or-less);
-  }
-
-  .data-series-1.data-series-count-5,
-  .data-series-1.data-series-count-4 {
-  stroke: var(--data-series-1--5-or-less);
-  fill: var(--data-series-1--5-or-less);
-  }
-
-  .data-series-2.data-series-count-5,
-  .data-series-2.data-series-count-4 {
-  stroke: var(--data-series-2--5-or-less);
-  fill: var(--data-series-2--5-or-less);
-  }
-
-  .data-series-3.data-series-count-5,
-  .data-series-3.data-series-count-4 {
-  stroke: var(--data-series-3--5-or-less);
-  fill: var(--data-series-3--5-or-less);
-  }
-
-  .data-series-4.data-series-count-5,
-  .data-series-4.data-series-count-4 {
-  stroke: var(--data-series-4--5-or-less);
-  fill: var(--data-series-4--5-or-less);
-  }
-
-  /* Series of 7 */
-
-  .data-series-0.data-series-count-7,
-  .data-series-0.data-series-count-6 {
-  stroke: var(--data-series-0--7-or-less);
-  fill: var(--data-series-0--7-or-less);
-  }
-
-  .data-series-1.data-series-count-7,
-  .data-series-1.data-series-count-6 {
-  stroke: var(--data-series-1--7-or-less);
-  fill: var(--data-series-1--7-or-less);
-  }
-
-  .data-series-2.data-series-count-7,
-  .data-series-2.data-series-count-6 {
-  stroke: var(--data-series-2--7-or-less);
-  fill: var(--data-series-2--7-or-less);
-  }
-
-  .data-series-3.data-series-count-7,
-  .data-series-3.data-series-count-6 {
-  stroke: var(--data-series-3--7-or-less);
-  fill: var(--data-series-3--7-or-less);
-  }
-
-  .data-series-4.data-series-count-7,
-  .data-series-4.data-series-count-6 {
-  stroke: var(--data-series-4--7-or-less);
-  fill: var(--data-series-4--7-or-less);
-  }
-
-  .data-series-5.data-series-count-7,
-  .data-series-5.data-series-count-6 {
-  stroke: var(--data-series-5--7-or-less);
-  fill: var(--data-series-5--7-or-less);
-  }
-
-  .data-series-6.data-series-count-7,
-  .data-series-6.data-series-count-6 {
-  stroke: var(--data-series-6--7-or-less);
-  fill: var(--data-series-6--7-or-less);
-  }
-
-  /* Series of 9 */
-
-  .data-series-0.data-series-count-9,
-  .data-series-0.data-series-count-8 {
-  stroke: var(--data-series-0--9-or-less);
-  fill: var(--data-series-0--9-or-less);
-  }
-
-  .data-series-1.data-series-count-9,
-  .data-series-1.data-series-count-8 {
-  stroke: var(--data-series-1--9-or-less);
-  fill: var(--data-series-1--9-or-less);
-  }
-
-  .data-series-2.data-series-count-9,
-  .data-series-2.data-series-count-8 {
-  stroke: var(--data-series-2--9-or-less);
-  fill: var(--data-series-2--9-or-less);
-  }
-
-  .data-series-3.data-series-count-9,
-  .data-series-3.data-series-count-8 {
-  stroke: var(--data-series-3--9-or-less);
-  fill: var(--data-series-3--9-or-less);
-  }
-
-  .data-series-4.data-series-count-9,
-  .data-series-4.data-series-count-8 {
-  stroke: var(--data-series-4--9-or-less);
-  fill: var(--data-series-4--9-or-less);
-  }
-
-  .data-series-5.data-series-count-9,
-  .data-series-5.data-series-count-8 {
-  stroke: var(--data-series-5--9-or-less);
-  fill: var(--data-series-5--9-or-less);
-  }
-
-  .data-series-6.data-series-count-9,
-  .data-series-6.data-series-count-8 {
-  stroke: var(--data-series-6--9-or-less);
-  fill: var(--data-series-6--9-or-less);
-  }
-
-  .data-series-7.data-series-count-9,
-  .data-series-7.data-series-count-8 {
-  stroke: var(--data-series-7--9-or-less);
-  fill: var(--data-series-7--9-or-less);
-  }
-
-  .data-series-8.data-series-count-9,
-  .data-series-8.data-series-count-8 {
-  stroke: var(--data-series-8--9-or-less);
-  fill: var(--data-series-8--9-or-less);
-  }
-</span>
+  </style>
+  <title>Benchotron Renderer</title>
+</head>
 
 <body>
+  <span id="svg-styles" style="display:none">
+    /* https://www.vis4.net/palettes/#/9|d|00429d,96ffea|ffffe0,ff005e,93003a|1|1 */
+    :root {
+    --data-series-0--1-only: #000;
+
+    --data-series-0--3-or-less: #00429d;
+    --data-series-1--3-or-less: #96ffea;
+    --data-series-2--3-or-less: #93003a;
+
+    --data-series-0--5-or-less: #00429d;
+    --data-series-1--5-or-less: #629cc4;
+    --data-series-2--5-or-less: #96ffea;
+    --data-series-3--5-or-less: #f4777f;
+    --data-series-4--5-or-less: #93003a;
+
+    --data-series-0--7-or-less: #00429d;
+    --data-series-1--7-or-less: #4d7cb7;
+    --data-series-2--7-or-less: #74bcd1;
+    --data-series-3--7-or-less: #96ffea;
+    --data-series-4--7-or-less: #ffa59e;
+    --data-series-5--7-or-less: #dd4c65;
+    --data-series-6--7-or-less: #93003a;
+
+    --data-series-0--9-or-less: #00429d;
+    --data-series-1--9-or-less: #416db1;
+    --data-series-2--9-or-less: #629cc4;
+    --data-series-3--9-or-less: #7dccd7;
+    --data-series-4--9-or-less: #96ffea;
+    --data-series-5--9-or-less: #ffbcaf;
+    --data-series-6--9-or-less: #f4777f;
+    --data-series-7--9-or-less: #cf3759;
+    --data-series-8--9-or-less: #93003a;
+    }
+
+    .background {
+    fill: white;
+    }
+
+    text {
+    font-size: 14px;
+    font-family: sans-serif;
+    }
+
+    .axis-path,
+    .axis-line {
+    fill: none;
+    stroke: #000;
+    stroke-width: 1px;
+    shape-rendering: crispEdges;
+    }
+
+    .line {
+    fill: none;
+    stroke-width: 1.5px;
+    }
+
+    .error-bar {
+    fill: none;
+    }
+
+    /* Series of 1 */
+
+    .data-series-0.data-series-count-1 {
+    stroke: var(--data-series-0--1-only);
+    fill: var(--data-series-0--1-only);
+    }
+
+    /* Series of 3 */
+
+    .data-series-0.data-series-count-3,
+    .data-series-0.data-series-count-2 {
+    stroke: var(--data-series-0--3-or-less);
+    fill: var(--data-series-0--3-or-less);
+    }
+
+    .data-series-1.data-series-count-3,
+    .data-series-1.data-series-count-2 {
+    stroke: var(--data-series-1--3-or-less);
+    fill: var(--data-series-1--3-or-less);
+    }
+
+    .data-series-2.data-series-count-3,
+    .data-series-2.data-series-count-2 {
+    stroke: var(--data-series-2--3-or-less);
+    fill: var(--data-series-2--3-or-less);
+    }
+
+    /* Series of 5 */
+
+    .data-series-0.data-series-count-5,
+    .data-series-0.data-series-count-4 {
+    stroke: var(--data-series-0--5-or-less);
+    fill: var(--data-series-0--5-or-less);
+    }
+
+    .data-series-1.data-series-count-5,
+    .data-series-1.data-series-count-4 {
+    stroke: var(--data-series-1--5-or-less);
+    fill: var(--data-series-1--5-or-less);
+    }
+
+    .data-series-2.data-series-count-5,
+    .data-series-2.data-series-count-4 {
+    stroke: var(--data-series-2--5-or-less);
+    fill: var(--data-series-2--5-or-less);
+    }
+
+    .data-series-3.data-series-count-5,
+    .data-series-3.data-series-count-4 {
+    stroke: var(--data-series-3--5-or-less);
+    fill: var(--data-series-3--5-or-less);
+    }
+
+    .data-series-4.data-series-count-5,
+    .data-series-4.data-series-count-4 {
+    stroke: var(--data-series-4--5-or-less);
+    fill: var(--data-series-4--5-or-less);
+    }
+
+    /* Series of 7 */
+
+    .data-series-0.data-series-count-7,
+    .data-series-0.data-series-count-6 {
+    stroke: var(--data-series-0--7-or-less);
+    fill: var(--data-series-0--7-or-less);
+    }
+
+    .data-series-1.data-series-count-7,
+    .data-series-1.data-series-count-6 {
+    stroke: var(--data-series-1--7-or-less);
+    fill: var(--data-series-1--7-or-less);
+    }
+
+    .data-series-2.data-series-count-7,
+    .data-series-2.data-series-count-6 {
+    stroke: var(--data-series-2--7-or-less);
+    fill: var(--data-series-2--7-or-less);
+    }
+
+    .data-series-3.data-series-count-7,
+    .data-series-3.data-series-count-6 {
+    stroke: var(--data-series-3--7-or-less);
+    fill: var(--data-series-3--7-or-less);
+    }
+
+    .data-series-4.data-series-count-7,
+    .data-series-4.data-series-count-6 {
+    stroke: var(--data-series-4--7-or-less);
+    fill: var(--data-series-4--7-or-less);
+    }
+
+    .data-series-5.data-series-count-7,
+    .data-series-5.data-series-count-6 {
+    stroke: var(--data-series-5--7-or-less);
+    fill: var(--data-series-5--7-or-less);
+    }
+
+    .data-series-6.data-series-count-7,
+    .data-series-6.data-series-count-6 {
+    stroke: var(--data-series-6--7-or-less);
+    fill: var(--data-series-6--7-or-less);
+    }
+
+    /* Series of 9 */
+
+    .data-series-0.data-series-count-9,
+    .data-series-0.data-series-count-8 {
+    stroke: var(--data-series-0--9-or-less);
+    fill: var(--data-series-0--9-or-less);
+    }
+
+    .data-series-1.data-series-count-9,
+    .data-series-1.data-series-count-8 {
+    stroke: var(--data-series-1--9-or-less);
+    fill: var(--data-series-1--9-or-less);
+    }
+
+    .data-series-2.data-series-count-9,
+    .data-series-2.data-series-count-8 {
+    stroke: var(--data-series-2--9-or-less);
+    fill: var(--data-series-2--9-or-less);
+    }
+
+    .data-series-3.data-series-count-9,
+    .data-series-3.data-series-count-8 {
+    stroke: var(--data-series-3--9-or-less);
+    fill: var(--data-series-3--9-or-less);
+    }
+
+    .data-series-4.data-series-count-9,
+    .data-series-4.data-series-count-8 {
+    stroke: var(--data-series-4--9-or-less);
+    fill: var(--data-series-4--9-or-less);
+    }
+
+    .data-series-5.data-series-count-9,
+    .data-series-5.data-series-count-8 {
+    stroke: var(--data-series-5--9-or-less);
+    fill: var(--data-series-5--9-or-less);
+    }
+
+    .data-series-6.data-series-count-9,
+    .data-series-6.data-series-count-8 {
+    stroke: var(--data-series-6--9-or-less);
+    fill: var(--data-series-6--9-or-less);
+    }
+
+    .data-series-7.data-series-count-9,
+    .data-series-7.data-series-count-8 {
+    stroke: var(--data-series-7--9-or-less);
+    fill: var(--data-series-7--9-or-less);
+    }
+
+    .data-series-8.data-series-count-9,
+    .data-series-8.data-series-count-8 {
+    stroke: var(--data-series-8--9-or-less);
+    fill: var(--data-series-8--9-or-less);
+    }
+  </span>
   <main role="main">
     <h1>purescript-benchotron SVG renderer</h1>
     <ol>
@@ -342,7 +346,6 @@
   <script src="FileSaver.min.js"></script>
   <script src="canvas-toBlob.js"></script>
   <script src="benchotronRenderer.js"></script>
-
   <script>
     var slugs = [];
     var exportToXListeners = [];
@@ -477,7 +480,6 @@
 
     document.getElementById('file')
       .addEventListener('change', handleFileSelect, false)
-
   </script>
 
 </html>

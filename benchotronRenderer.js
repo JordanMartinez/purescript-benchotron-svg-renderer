@@ -1,8 +1,11 @@
 window.BenchotronRenderer = {};
 (function () {
   const margin = { top: 40, right: 40, bottom: 60, left: 80 };
-  const width = 960 - margin.left - margin.right;
-  const height = 500 - margin.top - margin.bottom;
+  const width = 880;
+  const height = 400;
+  const footerHeight = 60;
+  const totalHeight = margin.top + height + footerHeight + margin.bottom;
+  const totalWidth = margin.left + width + margin.right;
 
   const x = d3.scale.linear()
     .range([0, width]);
@@ -97,8 +100,6 @@ window.BenchotronRenderer = {};
       .text(styleText);
 
     // Prepare the graph
-    const totalWidth = width + margin.left + margin.right;
-    const totalHeight = height + margin.top + margin.bottom;
     svg.attr("width", totalWidth)
       .attr("height", totalHeight);
     svg.append("rect")
@@ -174,6 +175,32 @@ window.BenchotronRenderer = {};
       .attr("x", 24)
       .attr("y", (_, i) => i * 20 + 13)
       .text((d) => d);
+
+    // Draw RFC3339 Date
+    var benchDate = [
+      [
+        data.dateRfc3339.slice(0, 4),
+        data.dateRfc3339.slice(5, 7),
+        data.dateRfc3339.slice(8, 10)
+      ].join("-"),
+      " ",
+      [
+        data.dateRfc3339.slice(11, 13),
+        data.dateRfc3339.slice(14, 16),
+        data.dateRfc3339.slice(17, 19)
+      ].join(":"),
+    ].join("");
+
+    const benchDateGroup = svg.append("g")
+      .attr("transform", `translate(${margin.left + width}, ${margin.top + height + footerHeight})`)
+      .attr("class", "graph-footer");
+    benchDateGroup.append("text")
+      .style("text-anchor", "end")
+      .text(`Ran on:`);
+    benchDateGroup.append("text")
+      .style("text-anchor", "end")
+      .attr("y", 14)
+      .text(`${benchDate}`)
 
     // HACK: Apply some classes for styling, since apparently lots of SVG
     // software can't cope with anything other than the most basic selectors

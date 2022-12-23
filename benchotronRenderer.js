@@ -1,11 +1,12 @@
 window.BenchotronRenderer = {};
 (function () {
-  const margin = { top: 40, right: 40, bottom: 60, left: 80 };
+  const margin = { top: 40, right: 40, bottom: 40, left: 80 };
   const width = 880;
   const height = 400;
   const footerHeight = 60;
   const totalHeight = margin.top + height + footerHeight + margin.bottom;
   const totalWidth = margin.left + width + margin.right;
+  const gap = 10;
 
   const x = d3.scale.linear()
     .range([0, width]);
@@ -84,7 +85,7 @@ window.BenchotronRenderer = {};
     return x.concat(y);
   }
 
-  function renderBenchmark(graphArea, data, legendData) {
+  function renderBenchmark(graphArea, data) {
     const chartArea = graphArea.append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
@@ -135,15 +136,14 @@ window.BenchotronRenderer = {};
       .attr('class', 'axis-path');
 
     // Plot each data series
-    data.series.map(function (d, index) {
-      renderSeries(chartArea, index, data.series.length, d.results);
-    })
+    data.series.forEach((d, index) => renderSeries(chartArea, index, data.series.length, d.results));
 
     // Draw legend
     const legend = chartArea.append("g")
       .attr("class", "legend")
       .attr("transform", "translate(50, 50)");
 
+    const legendData = data.series.map((d) => d.name);
     legend.selectAll("rect")
       .data(legendData)
       .enter()
@@ -206,17 +206,28 @@ window.BenchotronRenderer = {};
 
     // Prepare the graph
     svg.attr("width", totalWidth)
-      .attr("height", totalHeight);
+      .attr("height", totalHeight * 2 + gap * (2 - 1));
     svg.append("rect")
       .attr("width", totalWidth)
-      .attr("height", totalHeight)
+      .attr("height", totalHeight * 2 + gap * (2 - 1))
       .attr("class", "background");
 
-    const graphArea = svg.append("g")
-      .attr("transform", `translate(0, 0)`);
+    const graphArea1 = svg.append("g")
+      .attr("transform", `translate(0, ${(totalHeight * 0) + (gap * 0)})`);
 
-    const legendData = data.series.map((d) => d.name);;
-    renderBenchmark(graphArea, data, legendData);
+    renderBenchmark(graphArea1, data);
+
+    svg.append("line")
+      .attr("x1", 0)
+      .attr("y1", (totalHeight * 1 + (gap * 0) + gap / 2))
+      .attr("x2", totalWidth)
+      .attr("y2", (totalHeight * 1 + (gap * 0) + gap / 2))
+      .attr("class", "graph-gap-line");
+
+    const graphArea2 = svg.append("g")
+      .attr("transform", `translate(0, ${(totalHeight * 1) + (gap * 1)})`);
+
+    renderBenchmark(graphArea2, data);
   }
 
   window.BenchotronRenderer.drawGraph = drawGraph;

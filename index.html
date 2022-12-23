@@ -437,7 +437,7 @@
       var exportToPngButton = document.createElement("button");
       exportToPngButton.setAttribute("type", "button");
       exportToPngButton.textContent = "Export to PNG"
-      var unSubPng = subscribe(exportToSvgButton, 'click', function () { handlePngExport(outputElem, graphIdx) }, false);
+      var unSubPng = subscribe(exportToPngButton, 'click', function () { handlePngExport(outputElem, graphIdx) }, false);
       buttonContainer.appendChild(exportToPngButton);
       return function () {
         unSubSvg();

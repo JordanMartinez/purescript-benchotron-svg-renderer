@@ -84,30 +84,9 @@ window.BenchotronRenderer = {};
     return x.concat(y);
   }
 
-  function drawGraph(data, elId) {
-    // Delete the old graph
-    d3.select(elId + " svg").remove();
-
-    // Create the new graph
-    const svg = d3.select(elId).append("svg");
-
-    // Add the styles
-    const styleText = d3.select("#svg-styles").text();
-    d3.select(elId + " svg")
-      .append("defs")
-      .append("style")
-      .attr("type", "text/css")
-      .text(styleText);
-
-    // Prepare the graph
-    svg.attr("width", totalWidth)
-      .attr("height", totalHeight);
-    svg.append("rect")
-      .attr("width", totalWidth)
-      .attr("height", totalHeight)
-      .attr("class", "background");
-    const chartArea = svg.append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  function renderBenchmark(graphArea, data) {
+    const chartArea = graphArea.append("g")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     // Compute appropriate scales
     const allData = data.series
@@ -119,7 +98,7 @@ window.BenchotronRenderer = {};
 
     // Draw title
     chartArea.append("g")
-      .attr("transform", "translate(" + (width / 2) + ", 0)")
+      .attr("transform", `translate(${width / 2}, 0)`)
       .append("text")
       .style("text-anchor", "middle")
       .style("font-size", "28px")
@@ -128,7 +107,7 @@ window.BenchotronRenderer = {};
     // Draw x axis
     chartArea.append("g")
       .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
+      .attr("transform", `translate(0, ${height})`)
       .call(xAxis)
       .append("text")
       .attr("x", width / 2)
@@ -146,6 +125,14 @@ window.BenchotronRenderer = {};
       .attr("dy", ".71em")
       .style("text-anchor", "end")
       .text("Mean running time (seconds)");
+
+    // HACK: Apply some classes for styling, since apparently lots of SVG
+    // software can't cope with anything other than the most basic selectors
+    chartArea.selectAll('.axis line')
+      .attr('class', 'axis-line');
+
+    chartArea.selectAll('.axis path')
+      .attr('class', 'axis-path');
 
     // Plot each data series
     data.series.map(function (d, index) {
@@ -177,7 +164,7 @@ window.BenchotronRenderer = {};
       .text((d) => d);
 
     // Draw RFC3339 Date
-    var benchDate = [
+    const benchDate = [
       [
         data.dateRfc3339.slice(0, 4),
         data.dateRfc3339.slice(5, 7),
@@ -191,7 +178,7 @@ window.BenchotronRenderer = {};
       ].join(":"),
     ].join("");
 
-    const benchDateGroup = svg.append("g")
+    const benchDateGroup = graphArea.append("g")
       .attr("transform", `translate(${margin.left + width}, ${margin.top + height + footerHeight})`)
       .attr("class", "graph-footer");
     benchDateGroup.append("text")
@@ -200,15 +187,36 @@ window.BenchotronRenderer = {};
     benchDateGroup.append("text")
       .style("text-anchor", "end")
       .attr("y", 14)
-      .text(`${benchDate}`)
+      .text(`${benchDate}`);
+  }
 
-    // HACK: Apply some classes for styling, since apparently lots of SVG
-    // software can't cope with anything other than the most basic selectors
-    svg.selectAll('.axis line')
-      .attr('class', 'axis-line');
+  function drawGraph(data, elId) {
+    // Delete the old graph
+    d3.select(elId + " svg").remove();
 
-    svg.selectAll('.axis path')
-      .attr('class', 'axis-path');
+    // Create the new graph
+    const svg = d3.select(elId).append("svg");
+
+    // Add the styles
+    const styleText = d3.select("#svg-styles").text();
+    d3.select(elId + " svg")
+      .append("defs")
+      .append("style")
+      .attr("type", "text/css")
+      .text(styleText);
+
+    // Prepare the graph
+    svg.attr("width", totalWidth)
+      .attr("height", totalHeight);
+    svg.append("rect")
+      .attr("width", totalWidth)
+      .attr("height", totalHeight)
+      .attr("class", "background");
+
+    const graphArea = svg.append("g")
+      .attr("transform", `translate(0, 0)`);
+
+    renderBenchmark(graphArea, data);
   }
 
   window.BenchotronRenderer.drawGraph = drawGraph;

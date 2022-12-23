@@ -343,15 +343,26 @@
   </main>
 
   <script src="d3.v3.min.js"></script>
-  <script src="FileSaver.min.js"></script>
-  <script src="canvas-toBlob.js"></script>
   <script src="benchotronRenderer.js"></script>
   <script>
     var slugs = [];
     var exportToXListeners = [];
 
+    function saveAs(fileName, dataUrl) {
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      a.download = fileName;
+      a.href = dataUrl;
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function getCurrentSvg(outputElem) {
+      return outputElem.getElementsByTagName("svg")[0];
+    }
+
     function getCurrentSvgString(outputElem) {
-      var el = outputElem.getElementsByTagName("svg")[0]
+      var el = getCurrentSvg(outputElem);
       if (el != null) {
         return (new XMLSerializer).serializeToString(el)
       } else {
@@ -360,23 +371,22 @@
     }
 
     function handleSvgExport(outputElem, graphIdx) {
-      var svgString = getCurrentSvgString(outputElem)
-      var svgBlob = new Blob([svgString], { type: 'text/svg' })
-      var filename = slugs[graphIdx] || "graph"
-      saveAs(svgBlob, filename + ".svg")
+      var svgString = getCurrentSvgString(outputElem);
+      var filename = slugs[graphIdx] || "graph";
+      saveAs(filename + ".svg", `data:image/svg+xml;base64,${btoa(svgString)}`);
     }
 
     function handlePngExport(outputElem, graphIdx) {
+      var svgElem = getCurrentSvg(outputElem);
       var svgString = getCurrentSvgString(outputElem)
       var canvas = document.createElement('canvas')
-      canvas.width = 960
-      canvas.height = 500
+      canvas.width = parseInt(svgElem.getAttribute("width"), 10);
+      canvas.height = parseInt(svgElem.getAttribute("height"), 10);
 
       svgToCanvas(svgString, canvas, function () {
-        canvas.toBlob(function (blob) {
-          var filename = slugs[graphIdx] || "graph"
-          saveAs(blob, filename + ".png")
-        })
+        console.log(canvas.toDataURL("image/png"));
+        const filename = slugs[graphIdx] || "graph";
+        saveAs(filename + ".png", canvas.toDataURL("image/png"));
       })
     }
 

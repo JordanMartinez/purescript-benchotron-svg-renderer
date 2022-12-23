@@ -90,12 +90,12 @@ window.BenchotronRenderer = {};
   }
 
   function taggedResults(data) {
-    const tags = data.series.reduce((acc, next) => {
+    const tags = [...data.series.reduce((acc, next) => {
       return next.tags.reduce((acc2, tag) => {
-        acc2.push(tag);
+        acc2.add(tag);
         return acc2;
       }, acc);
-    }, []);
+    }, new Set())];
     return tags.reduce((acc, nextTag) => {
       acc.push({
         ...data,

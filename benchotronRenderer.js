@@ -84,7 +84,7 @@ window.BenchotronRenderer = {};
     return x.concat(y);
   }
 
-  function renderBenchmark(graphArea, data) {
+  function renderBenchmark(graphArea, data, legendData) {
     const chartArea = graphArea.append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
@@ -144,7 +144,6 @@ window.BenchotronRenderer = {};
       .attr("class", "legend")
       .attr("transform", "translate(50, 50)");
 
-    const legendData = data.series.map((d) => d.name);
     legend.selectAll("rect")
       .data(legendData)
       .enter()
@@ -216,7 +215,8 @@ window.BenchotronRenderer = {};
     const graphArea = svg.append("g")
       .attr("transform", `translate(0, 0)`);
 
-    renderBenchmark(graphArea, data);
+    const legendData = data.series.map((d) => d.name);;
+    renderBenchmark(graphArea, data, legendData);
   }
 
   window.BenchotronRenderer.drawGraph = drawGraph;

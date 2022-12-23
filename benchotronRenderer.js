@@ -96,8 +96,6 @@ window.BenchotronRenderer = {};
         return acc2;
       }, acc);
     }, []);
-    console.log(tags);
-    console.log(tags.length);
     return tags.reduce((acc, nextTag) => {
       acc.push({
         ...data,
